@@ -16,6 +16,16 @@ tinymce.init({
   });
   
 const pokemones =[]; 
+const eliminar = function(){
+  //1.-Saber qué botón fué el que se apretó
+  
+  //2.-Sacar el número del boton
+  let nro = this.nro;
+  //3.-Eliminar el pokémon de la lista
+  pokemones.splice(nro,1);
+  //4.-Recargar la tabla
+  cargarTabla();
+};
 
 const cargarTabla = () =>{
   //1.- Referencia a la tabla
@@ -35,11 +45,41 @@ const cargarTabla = () =>{
     let tdAcciones = document.createElement("td");
 
     tdNombre.innerText = p.nombre;
-    tdTipo.innerText = p.tipo;    
+    tdNombre.classList.add("text-center");
+    
+    let icono = document.createElement("i");
+      if (p.tipo == "1"){
+        //<i class="fas fa-tint"></i> 
+        icono.classList.add("fas","fa-tint","text-primary", "fa-2x");
+      } else if (p.tipo == "2"){
+        // <i class="fas fa-fire"></i>
+        icono.classList.add("fas","fa-fire","text-danger","fa-2x");
+      } else if (p.tipo == "3"){
+        // <i class="fab fa-envira"></i>
+        icono.classList.add("fab","fa-envira","text-success","fa-2x");
+      } else if (p.tipo == "4"){
+        // <i class="fas fa-bolt"></i>  
+        icono.classList.add("fas","fa-bolt","text-warning","fa-2x");  
+      }
+    tdTipo.classList.add("text-center");
+    tdTipo.appendChild(icono);        
+
     tdDescripcion.innerHTML = p.descripcion;
+    tdDescripcion.classList.add("text-center");
     tdNro.innerText = i + 1;
     //tdAcciones.innerText = 
     //TO DO: Como agrego un boton para las acciones
+
+    let boton = document.createElement("button");
+    boton.nro = i;
+    boton.addEventListener("click", eliminar);
+    //le agrego texto al boton
+    boton.innerText = "Enviar al profesor"
+    //hacer que el boton sea rojo
+    boton.classList.add("btn","btn-danger");
+    tdAcciones.appendChild(boton);
+    tdAcciones.classList.add("text-center");
+
     tr.appendChild(tdNro);
     tr.appendChild(tdNombre);
     tr.appendChild(tdTipo);
@@ -50,9 +90,6 @@ const cargarTabla = () =>{
   };
   
   //4.- Agregar esa fila a la tabla
-
-  
-
 
 };
 
@@ -74,7 +111,7 @@ document.querySelector("#pokemon-form").addEventListener('submit', (e)=>{
     pokemones.push(pokemon);
     cargarTabla();
     
-    Swal.fire("Pokémon Registrado");
+    Swal.fire("Registro exitoso","Pokémon Registrado","info");
     });
 
 
