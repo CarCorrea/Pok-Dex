@@ -16,15 +16,25 @@ tinymce.init({
   });
   
 const pokemones =[]; 
-const eliminar = function(){
-  //1.-Saber qué botón fué el que se apretó
+const eliminar = async function(){
+
+  let res = await Swal.fire({
+    title: "¿Desea enviar el pokémon al profesor?",
+    showCancelButton: true,
+    confirmButtonText: "Enviar!"
+  });
+  if(res.isConfirmed){
+    //1.-Saber qué botón fué el que se apretó
   
-  //2.-Sacar el número del boton
-  let nro = this.nro;
-  //3.-Eliminar el pokémon de la lista
-  pokemones.splice(nro,1);
-  //4.-Recargar la tabla
-  cargarTabla();
+    //2.-Sacar el número del boton
+    let nro = this.nro;
+    //3.-Eliminar el pokémon de la lista
+    pokemones.splice(nro,1);
+    //4.-Recargar la tabla
+    cargarTabla();
+  }else{
+    Swal.fire("Operación cancelada");
+  }
 };
 
 const cargarTabla = () =>{
@@ -99,19 +109,44 @@ document.querySelector("#pokemon-form").addEventListener('submit', (e)=>{
     let descripcion = tinymce.get("desc-txt").getContent();
     let legendario = document.querySelector("#legendario-si").checked;
     let tipo = document.querySelector("#tipo-select").value;
+    let esValido = true;
+    document.querySelector("#nombre-txt").classList.remove("is-invalid");
+    document.querySelector("#desc-txt").classList.remove("is-invalid");
 
-    //console.log("Hola, mundo!", nombre, descripcion, legendario, tipo);
+    if(nombre.trim() == "") {
+      document.querySelector("#nombre-txt").classList.add("is-invalid");
+      esValido = false;
+    }
 
-    let pokemon = {};
-        pokemon.nombre = nombre;
-        pokemon.descripcion = descripcion;
-        pokemon.legendario = legendario;
-        pokemon.tipo = tipo;
+    if(descripcion.trim() == "") {
+      document.querySelector("#desc-txt").classList.add("is-invalid");
+      esValido = false;
+    }
 
-    pokemones.push(pokemon);
-    cargarTabla();
-    
-    Swal.fire("Registro exitoso","Pokémon Registrado","info");
+    if(esValido){
+      let pokemon = {};
+      pokemon.nombre = nombre;
+      pokemon.descripcion = descripcion;
+      pokemon.legendario = legendario;
+      pokemon.tipo = tipo;
+
+      pokemones.push(pokemon);
+      cargarTabla();
+  
+      Swal.fire("Registro exitoso","Pokémon Registrado","info");
+      }
     });
+    
 
 
+  document.querySelector("#limpiar-btn").addEventListener("click", () =>{
+    //limpiar elementos
+    //limpiar un nombre
+    document.querySelector("#nombre-txt").value = "";
+    //limpiar un tinymce
+    tinymce.get("desc-txt").setContent("");
+    //limpia un radiobutton seleccionando la 1era opcion
+    document.querySelector("#legendario-si").checked = true;
+    //limpia un select
+    document.querySelector("#tipo-select").value = "1";
+  });
